@@ -1,0 +1,71 @@
+
+## Ignore Visual Studio user-specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Build results
+[Bb]in/
+[Oo]bj/
+[Aa]pp_Data/Logs/
+
+## IIS Express
+/.vs/config/applicationhost.config
+
+## ASP.NET temp files
+Temporary ASP.NET Files/
+
+## NuGet packages
+packages/
+*.nupkg
+# Uncomment if using package restore
+# !packages/repositories.config
+
+## Publish output
+*.publishsettings
+publish/
+AppPackages/
+
+## Resharper (JetBrains)
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+## Rider
+.idea/
+
+## VS Code
+.vscode/
+
+## Logs
+*.log
+
+## Cache
+*.Cache
+*.dbmdl
+
+## Test results
+TestResults/
+*.trx
+
+## Entity Framework
+*.mdf
+*.ldf
+*.db
+
+## Web config transforms (optional)
+# Web.*.config
+
+## Node (if using gulp/grunt)
+node_modules/
+npm-debug.log
+bower_components/
+
+## Other
+*.orig
+*.tmp
+*.bak
+Thumbs.db
+Desktop.ini
