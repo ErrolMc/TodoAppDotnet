@@ -56,8 +56,7 @@ namespace TodoAppFrontend.Controllers
 
             if (result)
             {
-                await AuthService.LoginAsync(model.Username, model.Password);
-                return RedirectToAction("Index", "Home");
+                ModelState.AddModelError("", "Successfully registered");
             }
 
             ModelState.AddModelError("", "Registration failed. Username may already exist.");

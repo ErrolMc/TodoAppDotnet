@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using TodoAppBackend.App_Start;
 
 namespace TodoAppBackend
 {
@@ -10,6 +11,9 @@ namespace TodoAppBackend
     {
         public static void Register(HttpConfiguration config)
         {
+            // Configure Autofac DI container
+            AutofacConfig.Configure(config);
+
             var cors = new EnableCorsAttribute("*", "*", "*");
             config.EnableCors(cors);
 

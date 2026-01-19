@@ -43,16 +43,15 @@ namespace TodoAppFrontend.Services.Concrete
 
         public async Task<bool> RegisterAsync(string username, string password)
         {
-            // TODO: Replace with actual API call to backend registration endpoint
-            await Task.Delay(100); // Simulate async operation
-
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            var request = new LoginRequest()
             {
-                return false;
-            }
+                Username = username,
+                Password = password
+            };
 
-            // Simulate successful registration - replace with actual API call
-            return true;
+            PostResponse<string> response = await HttpHelper.PostAsync<LoginRequest, string>(_httpClient, "api/auth/register", request);
+
+            return response.IsSuccessful;
         }
 
         public UserDTO GetCurrentUser() => _currentUser;
