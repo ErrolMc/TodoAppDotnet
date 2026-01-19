@@ -145,6 +145,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\TodoAppShared\LoginRequest.cs">
+      <Link>Source\Shared\LoginRequest.cs</Link>
+    </Compile>
     <Compile Include="..\TodoAppShared\LoginResult.cs">
       <Link>Source\Shared\LoginResult.cs</Link>
     </Compile>
@@ -164,6 +167,9 @@
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Http\HttpHelper.cs" />
+    <Compile Include="Source\Http\HttpService.cs" />
+    <Compile Include="Source\Http\PostResponse.cs" />
     <Compile Include="Source\Interfaces\Concrete\AuthService.cs" />
     <Compile Include="Source\Interfaces\IAuthService.cs" />
   </ItemGroup>

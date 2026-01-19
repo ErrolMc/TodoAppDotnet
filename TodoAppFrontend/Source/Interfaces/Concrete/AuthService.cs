@@ -1,35 +1,37 @@
-using System;
 using System.Threading.Tasks;
-using System.Web;
+using TodoAppFrontend.Source;
 using TodoAppShared;
+using TodoAppFrontend.Http;
 
 namespace TodoAppFrontend.Services.Concrete
 {
-    public class AuthService : IAuthService
+    public class AuthService : HttpService, IAuthService
     {
         private UserDTO _currentUser;
 
         public async Task<bool> LoginAsync(string username, string password)
         {
-            // TODO: Replace with actual API call to backend authentication endpoint
-            await Task.Delay(100); // Simulate async operation
-            var loginResult = new LoginResult()
+            var request = new LoginRequest()
             {
-                Success = true, 
-                User = new UserDTO() { UserID = username, UserName = username },
-                Message = "Success" 
+                Username = username,
+                Password = password
             };
 
-            // For now, this is a placeholder implementation
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            PostResponse<LoginResult> response = await HttpHelper.PostAsync<LoginRequest, LoginResult>(_httpClient, "api/auth/login", request);
+
+            if (response.IsSuccessful)
             {
-                return true;
+                LoginResult loginResult = response.Data;
+                
+                // Deserialize the response
+                if (loginResult != null && loginResult.Success)
+                {
+                    _currentUser = loginResult.User;
+                    return true;
+                }
             }
 
-            _currentUser = loginResult.User;
-
-            // simulate true
-            return true;
+            return false;
         }
 
         public async Task<bool> LogoutAsync()
