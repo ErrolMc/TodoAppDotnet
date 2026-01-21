@@ -146,6 +146,9 @@
     <Compile Include="..\TodoAppShared\LoginResult.cs">
       <Link>Source\Shared\LoginResult.cs</Link>
     </Compile>
+    <Compile Include="..\TodoAppShared\TodoItemDTO.cs">
+      <Link>Source\Shared\TodoItemDTO.cs</Link>
+    </Compile>
     <Compile Include="..\TodoAppShared\UserDTO.cs">
       <Link>Source\Shared\UserDTO.cs</Link>
     </Compile>
@@ -153,13 +156,18 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\TodoItemController.cs" />
     <Compile Include="Data\ApplicationDbContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\Concrete\TodoItemRepository.cs" />
+    <Compile Include="Repositories\ITodoItemRepository.cs" />
     <Compile Include="Repositories\IUserRepository.cs" />
-    <Compile Include="Repositories\UserRepository.cs" />
+    <Compile Include="Repositories\Concrete\UserRepository.cs" />
+    <Compile Include="Source\ConversionExtensions.cs" />
+    <Compile Include="Source\Data\TodoItem.cs" />
     <Compile Include="Source\Data\User.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@ using Autofac;
 using Autofac.Integration.WebApi;
 using TodoAppBackend.Data;
 using TodoAppBackend.Repositories;
+using TodoAppBackend.Repositories.Concrete;
 
 namespace TodoAppBackend.App_Start
 {
@@ -24,6 +25,10 @@ namespace TodoAppBackend.App_Start
             // Register repositories
             builder.RegisterType<UserRepository>()
                 .As<IUserRepository>()
+                .InstancePerRequest();
+
+            builder.RegisterType<TodoItemRepository>()
+                .As<ITodoItemRepository>()
                 .InstancePerRequest();
 
             // Build the container

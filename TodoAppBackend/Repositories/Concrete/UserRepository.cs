@@ -51,6 +51,7 @@ namespace TodoAppBackend.Repositories
             }
         }
 
+        #region disposing
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -68,5 +69,6 @@ namespace TodoAppBackend.Repositories
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+        #endregion
     }
 }
