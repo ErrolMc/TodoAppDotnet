@@ -9,7 +9,7 @@ namespace TodoAppFrontend.Services.Concrete
     {
         private UserDTO _currentUser;
 
-        public async Task<bool> LoginAsync(string username, string password)
+        public async Task<Result> LoginAsync(string username, string password)
         {
             var request = new LoginRequest()
             {
@@ -17,7 +17,7 @@ namespace TodoAppFrontend.Services.Concrete
                 Password = password
             };
 
-            PostResponse<LoginResult> response = await HttpHelper.PostAsync<LoginRequest, LoginResult>(_httpClient, "api/auth/login", request);
+            ApiResponse<LoginResult> response = await HttpHelper.PostAsync<LoginRequest, LoginResult>(HttpClient, "api/auth/login", request);
 
             if (response.IsSuccessful)
             {
@@ -27,21 +27,21 @@ namespace TodoAppFrontend.Services.Concrete
                 if (loginResult != null && loginResult.Success)
                 {
                     _currentUser = loginResult.User;
-                    return true;
+                    return Result.Success();
                 }
             }
 
-            return false;
+            return Result.Failure("Login failed");
         }
 
-        public async Task<bool> LogoutAsync()
+        public async Task<Result> LogoutAsync()
         {
             await Task.Delay(100);
             _currentUser = null;
-            return true;
+            return Result.Success();
         }
 
-        public async Task<bool> RegisterAsync(string username, string password)
+        public async Task<Result> RegisterAsync(string username, string password)
         {
             var request = new LoginRequest()
             {
@@ -49,9 +49,9 @@ namespace TodoAppFrontend.Services.Concrete
                 Password = password
             };
 
-            PostResponse<string> response = await HttpHelper.PostAsync<LoginRequest, string>(_httpClient, "api/auth/register", request);
+            ApiResponse<string> response = await HttpHelper.PostAsync<LoginRequest, string>(HttpClient, "api/auth/register", request);
 
-            return response.IsSuccessful;
+            return response;
         }
 
         public UserDTO GetCurrentUser() => _currentUser;

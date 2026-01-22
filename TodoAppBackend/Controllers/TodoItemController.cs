@@ -54,19 +54,19 @@ namespace TodoAppBackend.Controllers
 
         [HttpPost]
         [Route("api/todoitem/create")]
-        public async Task<IHttpActionResult> CreateTodoItem(TodoItemDTO todoItemDto)
+        public async Task<IHttpActionResult> CreateTodoItem(CreateTodoItemRequest request)
         {
-            if (todoItemDto == null || string.IsNullOrEmpty(todoItemDto.Title) || string.IsNullOrEmpty(todoItemDto.UserID))
+            if (request == null || string.IsNullOrEmpty(request.UserID) || string.IsNullOrEmpty(request.Title))
             {
-                return BadRequest("Title and User ID are required.");
+                return BadRequest("User ID and Title are required");
             }
 
             var newItem = new TodoItem
             {
                 Id = Guid.NewGuid().ToString(),
-                UserID = todoItemDto.UserID,
-                Title = todoItemDto.Title,
-                Description = todoItemDto.Description,
+                UserID = request.UserID,
+                Title = request.Title,
+                Description = request.Description,
                 CreateDate = DateTime.UtcNow,
                 IsCompleted = false,
                 CompletedDate = null,

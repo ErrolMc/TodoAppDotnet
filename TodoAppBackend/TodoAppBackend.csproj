@@ -140,6 +140,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\TodoAppShared\CreateTodoItemRequest.cs">
+      <Link>Source\Shared\CreateTodoItemRequest.cs</Link>
+    </Compile>
     <Compile Include="..\TodoAppShared\LoginRequest.cs">
       <Link>Source\Shared\LoginRequest.cs</Link>
     </Compile>

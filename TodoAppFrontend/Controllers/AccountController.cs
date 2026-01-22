@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using TodoAppFrontend.Models;
 using TodoAppFrontend.Services;
+using TodoAppFrontend.Source;
 
 namespace TodoAppFrontend.Controllers
 {
@@ -52,14 +53,17 @@ namespace TodoAppFrontend.Controllers
                 return View(model);
             }
 
-            var result = await AuthService.RegisterAsync(model.Username, model.Password);
+            Result result = await AuthService.RegisterAsync(model.Username, model.Password);
 
             if (result)
             {
                 ModelState.AddModelError("", "Successfully registered");
             }
-
-            ModelState.AddModelError("", "Registration failed. Username may already exist.");
+            else
+            {
+                ModelState.AddModelError("", result.ErrorMessage);
+            }
+                
             return View(model);
         }
 
