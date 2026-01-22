@@ -1,43 +1,307 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+@model TodoAppFrontend.Models.HomeIndexViewModel
+
+@{
+    ViewBag.Title = "My Todos";
 }
 
 <main>
-    <div class="row">
-        <div class="col-12 text-end mb-3">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h1>My Todos</h1>
+            <p class="text-muted">Welcome, @Model.CurrentUserName</p>
+        </div>
+        <div class="col-md-6 text-end">
             @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { @class = "d-inline" }))
             {
                 @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+                <button type="submit" class="btn btn-outline-danger">Logout</button>
             }
         </div>
     </div>
 
-    <section class="row" aria-labelledby="dashboardTitle">
+    <div class="row mb-4">
         <div class="col-12">
-            <h1 id="dashboardTitle">Your Dashboard</h1>
-            <p class="lead">Manage your tasks and stay organized.</p>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTodoModal">
+                <i class="bi bi-plus-circle"></i> Add Todo
+            </button>
         </div>
-    </section>
+    </div>
 
-    <div class="row mt-4">
-        <section class="col-md-6" aria-labelledby="tasksTitle">
-            <div class="card">
-                <div class="card-body">
-                    <h2 id="tasksTitle" class="card-title">My Tasks</h2>
-                    <p class="card-text">View and manage your todo items.</p>
-                    <a href="#" class="btn btn-primary">View Tasks</a>
+    <div class="row">
+        <div class="col-12">
+            @if (Model.TodoItems == null || !Model.TodoItems.Any())
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle"></i> No todos yet. Click "Add Todo" to get started!
                 </div>
-            </div>
-        </section>
-        <section class="col-md-6" aria-labelledby="profileTitle">
-            <div class="card">
-                <div class="card-body">
-                    <h2 id="profileTitle" class="card-title">Profile</h2>
-                    <p class="card-text">Update your account settings and preferences.</p>
-                    <a href="#" class="btn btn-outline-primary">Edit Profile</a>
+            }
+            else
+            {
+                <div id="todoList" class="list-group">
+                    @foreach (var todo in Model.TodoItems)
+                    {
+                        <div class="list-group-item @(todo.IsCompleted ? "bg-light" : "")" data-todo-id="@todo.Id">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="form-check d-inline-block me-3">
+                                        <input class="form-check-input todo-checkbox" type="checkbox" 
+                                               @(todo.IsCompleted ? "checked" : "") 
+                                               data-todo-id="@todo.Id">
+                                    </div>
+                                    <div class="d-inline-block">
+                                        <h5 class="mb-1 todo-title @(todo.IsCompleted ? "text-decoration-line-through text-muted" : "")">
+                                            @todo.Title
+                                        </h5>
+                                        @if (!string.IsNullOrEmpty(todo.Description))
+                                        {
+                                            <p class="mb-1 todo-description @(todo.IsCompleted ? "text-muted" : "")">
+                                                @todo.Description
+                                            </p>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary edit-todo-btn" 
+                                            data-todo-id="@todo.Id"
+                                            data-todo-title="@todo.Title"
+                                            data-todo-description="@todo.Description">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger delete-todo-btn" 
+                                            data-todo-id="@todo.Id">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
-            </div>
-        </section>
+            }
+        </div>
     </div>
 </main>
+
+<!-- Add Todo Modal -->
+<div class="modal fade" id="addTodoModal" tabindex="-1" aria-labelledby="addTodoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTodoModalLabel">Add New Todo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addTodoForm">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="addTodoTitle" class="form-label">Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="addTodoTitle" name="Title" required maxlength="100">
+                        <div class="invalid-feedback">Please provide a title.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addTodoDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="addTodoDescription" name="Description" rows="3" maxlength="500"></textarea>
+                    </div>
+                    <div class="alert alert-danger d-none" id="addTodoError" role="alert"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveTodoBtn">Save Todo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Todo Modal -->
+<div class="modal fade" id="editTodoModal" tabindex="-1" aria-labelledby="editTodoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTodoModalLabel">Edit Todo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editTodoForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="editTodoId" name="Id">
+                    <div class="mb-3">
+                        <label for="editTodoTitle" class="form-label">Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editTodoTitle" name="Title" required maxlength="100">
+                        <div class="invalid-feedback">Please provide a title.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTodoDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editTodoDescription" name="Description" rows="3" maxlength="500"></textarea>
+                    </div>
+                    <div class="alert alert-danger d-none" id="editTodoError" role="alert"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="updateTodoBtn">Update Todo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var addTodoModal = new bootstrap.Modal(document.getElementById('addTodoModal'));
+            var editTodoModal = new bootstrap.Modal(document.getElementById('editTodoModal'));
+
+            // Add Todo
+            $('#saveTodoBtn').click(function() {
+                var form = $('#addTodoForm')[0];
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                var formData = $('#addTodoForm').serialize();
+                
+                $.ajax({
+                    url: '@Url.Action("CreateTodo", "Home")',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            $('#addTodoError').text(response.message).removeClass('d-none');
+                        }
+                    },
+                    error: function() {
+                        $('#addTodoError').text('An error occurred. Please try again.').removeClass('d-none');
+                    }
+                });
+            });
+
+            // Edit Todo - Open Modal
+            $(document).on('click', '.edit-todo-btn', function() {
+                var todoId = $(this).data('todo-id');
+                var title = $(this).data('todo-title');
+                var description = $(this).data('todo-description');
+
+                $('#editTodoId').val(todoId);
+                $('#editTodoTitle').val(title);
+                $('#editTodoDescription').val(description || '');
+                $('#editTodoError').addClass('d-none');
+
+                editTodoModal.show();
+            });
+
+            // Update Todo
+            $('#updateTodoBtn').click(function() {
+                var form = $('#editTodoForm')[0];
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                var formData = $('#editTodoForm').serialize();
+                
+                $.ajax({
+                    url: '@Url.Action("UpdateTodo", "Home")',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            $('#editTodoError').text(response.message).removeClass('d-none');
+                        }
+                    },
+                    error: function() {
+                        $('#editTodoError').text('An error occurred. Please try again.').removeClass('d-none');
+                    }
+                });
+            });
+
+            // Delete Todo
+            $(document).on('click', '.delete-todo-btn', function() {
+                if (!confirm('Are you sure you want to delete this todo?')) {
+                    return;
+                }
+
+                var todoId = $(this).data('todo-id');
+                var token = $('input[name="__RequestVerificationToken"]').val();
+                
+                $.ajax({
+                    url: '@Url.Action("DeleteTodo", "Home")',
+                    type: 'POST',
+                    data: { 
+                        id: todoId,
+                        __RequestVerificationToken: token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('[data-todo-id="' + todoId + '"]').fadeOut(300, function() {
+                                $(this).remove();
+                                if ($('#todoList .list-group-item').length === 0) {
+                                    location.reload();
+                                }
+                            });
+                        } else {
+                            alert(response.message || 'Failed to delete todo');
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+            // Toggle Todo Completion
+            $(document).on('change', '.todo-checkbox', function() {
+                var todoId = $(this).data('todo-id');
+                var isCompleted = $(this).is(':checked');
+                var token = $('input[name="__RequestVerificationToken"]').val();
+                var listItem = $('[data-todo-id="' + todoId + '"]');
+                
+                $.ajax({
+                    url: '@Url.Action("ToggleTodo", "Home")',
+                    type: 'POST',
+                    data: { 
+                        id: todoId,
+                        isCompleted: isCompleted,
+                        __RequestVerificationToken: token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            if (isCompleted) {
+                                listItem.addClass('bg-light');
+                                listItem.find('.todo-title').addClass('text-decoration-line-through text-muted');
+                                listItem.find('.todo-description').addClass('text-muted');
+                            } else {
+                                listItem.removeClass('bg-light');
+                                listItem.find('.todo-title').removeClass('text-decoration-line-through text-muted');
+                                listItem.find('.todo-description').removeClass('text-muted');
+                            }
+                        } else {
+                            alert(response.message || 'Failed to update todo');
+                            $(this).prop('checked', !isCompleted);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred. Please try again.');
+                        $(this).prop('checked', !isCompleted);
+                    }
+                });
+            });
+
+            // Reset form when modal is closed
+            $('#addTodoModal').on('hidden.bs.modal', function() {
+                $('#addTodoForm')[0].reset();
+                $('#addTodoForm')[0].classList.remove('was-validated');
+                $('#addTodoError').addClass('d-none');
+            });
+
+            $('#editTodoModal').on('hidden.bs.modal', function() {
+                $('#editTodoForm')[0].reset();
+                $('#editTodoForm')[0].classList.remove('was-validated');
+                $('#editTodoError').addClass('d-none');
+            });
+        });
+    </script>
+}

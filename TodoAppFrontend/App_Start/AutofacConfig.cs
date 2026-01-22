@@ -28,6 +28,7 @@ namespace TodoAppFrontend.App_Start
 
             // Register services
             builder.RegisterType<AuthService>().As<IAuthService>().SingleInstance();
+            builder.RegisterType<TodoService>().As<ITodoService>().InstancePerRequest();
 
             // Build the container
             var container = builder.Build();
